@@ -1,80 +1,81 @@
-show databases;
-create database employee_204;
-use employee_204;
+create database employee_database_204;
+use employee_database_204;
+create table project_204(
+	pno int primary key,
+	ploc varchar(20),
+	pname varchar(20)
+);
 create table dept_204(
-		dept_no int primary key,
-        dept_name varchar(20),
-        dept_loc varchar(20)
+	deptno int primary key,
+	dname varchar(30),
+	dloc varchar(30)
 );
-create table emp_204(
-	e_no int primary key,
-    e_name varchar(20),
-    mgr_no int,
-    hiredate date,
-    sal int,
-    dept_no int, 
-    foreign key(dept_no) references dept_204(dept_no)
+create table employee_204(
+	empno int primary key,
+	ename varchar(20),
+	mgr_no int,
+	hiredate date,
+	sal double,
+	deptno int,
+	foreign key(deptno) references dept_204(deptno)
 );
-
-create table incentive_204(
-	emp_no int,
-    incentive_date int primary key, 
-    incentive_amt int,
-    foreign key(emp_no) references emp_204(e_no)
-);
-
-create table projects_204(
-	project_no int primary key,
-    project_loc varchar(40),
-    project_name varchar(20) 
-);
-
 create table assigned_to_204(
-		emp_no int,
-        project_no int,
-        role varchar(20),
-        foreign key(emp_no) references emp_204(e_no),
-        foreign key(project_no) references projects_204(project_no)
+	empno int primary key,
+	pno int,
+	job_role varchar(20),
+	foreign key(empno) references employee_204(empno),
+	foreign key(pno) references project_204(pno)
 );
-
-INSERT INTO dept_204 VALUES
-  (62, 'Finance', 'Paris'),
-  (61, 'Marketing', 'New York'),
-  (5, 'Marketing', 'Berlin'),
-  (60, 'HR', 'New York'),
-  (91, 'IT', 'London');
-  
-INSERT INTO emp_204 VALUES
-  (21, 'Michael Brown', 2, '2023-04-15', 80000, 5),
-  (75, 'Jane Doe', 1, '2023-10-07', 60000, 91),
-  (66, 'Jane Doe', 5, '2023-05-12', 70000, 62),
-  (67, 'Emily Jones', 5, '2023-05-20', 90000, 62),
-  (25, 'John Smith', 5, '2023-01-19', 80000, 91);
-  
-INSERT INTO incentive_204 VALUES
-  (75, 345, 4334),
-  (67, 38, 3115),
-  (66, 132, 4562),
-  (25, 233, 1809),
-  (67, 81, 1394);
-
-INSERT INTO projects_204 VALUES
-  (66, 'Seattle', 'Project Phoenix'),
-  (81, 'Chicago', 'Project Green Leaf'),
-  (27, 'San Francisco', 'Project Quantum Leap'),
-  (70, 'Seattle', 'Project Blue Sky'),
-  (18, 'San Francisco', 'Project Blue Sky');
-
-INSERT INTO assigned_to_204 VALUES
-  (66, 70, 'Team Lead'),
-  (25, 66, 'Developer'),
-  (67, 81, 'Developer'),
-  (25, 27, 'Project Manager'),
-  (21, 27, 'Designer');
-  
-
-
-  
+create table incentives_204(
+	empno int,
+	incentive_date date primary key,
+	incentive_amount double,
+	foreign key(empno) references employee_204(empno)
+);
+insert into project_204 values
+	(1,"bengaluru","abcd"),
+	(2,"hyderabad","bcda"),
+	(3,"bengaluru","abab"),
+	(4,"bengaluru","baba"),
+	(5,"hyderabad","cdcd"),
+    (6, "mysuru", "efef");
+insert into dept_204 values
+	(1,"cse","bengaluru"),
+	(2,"ise","hyderabad"),
+	(3,"ece","bengaluru"),
+	(4,"ete","hyderabad"),
+	(5,"ime","bengaluru"),
+    (6, "mech", "mysuru");
+insert into employee_204 values 
+	(1,"a",null,"2023-11-9",70000,1),
+	(2,"b",2,"2023-8-9",70000,1),
+	(3,"c",3,"2023-6-8",70000,2),
+	(4,"d",null,"2023-8-6",70000,2),
+	(5,"e",null,"2023-5-4",70000,3),
+    (6, "f", null, "2023-6-1", 90000, 6);
+insert into assigned_to_204 values
+	(1,1,"employee"),
+	(2,1,"manager"),
+	(3,2,"manager"),
+	(4,3,"employee"),
+	(5,4,"employee"),
+    (6, 6, "employee");
+insert into incentives_204 values
+	(1,"2023-12-9",10000),
+	(2,"2023-8-9",10000),
+	(3,"2023-6-8",10000),
+	(4,"2023-5-4",10000),
+	(5,"2023-12-8",10000);
+-- 1
+select assigned_to_204.empno from assigned_to_204, project_204 
+where assigned_to_204.pno = project_204.pno and project_204.ploc in ("bengaluru", "mysuru", "hyderabad");
+-- 2
+select empno from employee_204 where empno not in (select empno from incentives_204);
+-- 3
+select employee_204.empno, ename, dname, job_role, dloc, ploc 
+from employee_204, assigned_to_204, project_204, dept_204 
+where ploc = dloc and assigned_to_204.empno = employee_204.empno
+and employee_204.deptno = dept_204.deptno and project_204.pno = assigned_to_204.pno;
 
 
 
